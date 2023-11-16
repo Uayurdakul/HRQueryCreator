@@ -37,6 +37,8 @@
             label2 = new Label();
             label3 = new Label();
             label4 = new Label();
+            checkBox1 = new CheckBox();
+            checkBox2 = new CheckBox();
             SuspendLayout();
             // 
             // button1
@@ -117,9 +119,9 @@
             label3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             label3.Location = new Point(729, 56);
             label3.Name = "label3";
-            label3.Size = new Size(79, 29);
+            label3.Size = new Size(55, 29);
             label3.TabIndex = 8;
-            label3.Text = "eBA Tabloları";
+            label3.Text = "Tablolar";
             // 
             // label4
             // 
@@ -130,11 +132,35 @@
             label4.TabIndex = 9;
             label4.Text = "Önce kolon,table ve filter içeren excell dosyası sonrasında id bilgileri içeren excel dosyası seçilmelidir.";
             // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(391, 466);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(101, 19);
+            checkBox1.TabIndex = 10;
+            checkBox1.Text = "Standart Tablo";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
+            // 
+            // checkBox2
+            // 
+            checkBox2.AutoSize = true;
+            checkBox2.Location = new Point(391, 491);
+            checkBox2.Name = "checkBox2";
+            checkBox2.Size = new Size(78, 19);
+            checkBox2.TabIndex = 11;
+            checkBox2.Text = "eBA Tablo";
+            checkBox2.UseVisualStyleBackColor = true;
+            checkBox2.CheckedChanged += checkBox2_CheckedChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(942, 586);
+            Controls.Add(checkBox2);
+            Controls.Add(checkBox1);
             Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(label2);
@@ -147,6 +173,7 @@
             MinimumSize = new Size(958, 625);
             Name = "Form1";
             Text = "Form1";
+            Load += Form1_Load;
             ResumeLayout(false);
             PerformLayout();
         }
@@ -162,5 +189,7 @@
         private Label label2;
         private Label label3;
         private Label label4;
+        private CheckBox checkBox1;
+        private CheckBox checkBox2;
     }
 }
