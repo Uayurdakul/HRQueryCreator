@@ -36,8 +36,6 @@
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
-            dataGridView1 = new DataGridView();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // button1
@@ -122,20 +120,11 @@
             label3.TabIndex = 8;
             label3.Text = "eBA Tabloları";
             // 
-            // dataGridView1
-            // 
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(51, 408);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new Size(240, 150);
-            dataGridView1.TabIndex = 9;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(942, 586);
-            Controls.Add(dataGridView1);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -147,7 +136,6 @@
             MinimumSize = new Size(958, 625);
             Name = "Form1";
             Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }
 
@@ -161,6 +149,5 @@
         private Label label1;
         private Label label2;
         private Label label3;
-        private DataGridView dataGridView1;
     }
 }

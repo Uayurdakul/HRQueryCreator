@@ -2,7 +2,7 @@ using ExcelDataReader;
 using System.Data;
 using System.Data.OleDb;
 using System.Text;
-using System.Windows.Forms;
+using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExcellQueryDemo
 {
@@ -122,7 +122,7 @@ namespace ExcellQueryDemo
             Listbox2Doldur(aExcelPath);
 
             // B.xlsx dosyasýndaki renkli satýrlarý Listbox3'e ekle
-            Listbox3DoldurRenkliSatirlar(bExcelPath);
+            Listbox3DoldurRenkliSatirlar();
         }
 
         private void Listbox1Doldur(string excelPath)
@@ -155,22 +155,38 @@ namespace ExcellQueryDemo
             }
         }
 
-        private void Listbox3DoldurRenkliSatirlar(string excelPath)
+        private void Listbox3DoldurRenkliSatirlar()
         {
-            // Excel dosyasýný okuduk
-            DataSet dataSet = ReadExcelFile(excelPath);
+            // Excel dosyasýný aç
+            Excel.Application excelApp = new Excel.Application();
+            excelApp.Visible = false; // Excel uygulamasýný gizle
+            Excel.Workbook workbook = excelApp.Workbooks.Open("C:\\Users\\yunus\\Downloads\\ExcellToQuery"); // Dosya yolunu deðiþtirin
+            Excel.Worksheet worksheet = (Excel.Worksheet)workbook.Worksheets[0]; // Ýlk çalýþma sayfasýný seç
 
-            // DataTable seçtik
-            DataTable dataTable = dataSet.Tables[0];
+            // Çalýþma sayfasýndaki tüm hücreleri al
+            Excel.Range range = worksheet.UsedRange;
 
-            // DataTable'daki her satýrý kontrol et ve renkli olanlarý ListBox3'e ekledik
-            foreach (DataGridViewRow row in dataGridView1.Rows)
+            // Hücreleri tek tek dolaþ
+            for (int row = 1; row <= range.Rows.Count; row++)
             {
-                if (row.DefaultCellStyle.BackColor != Color.Blue) // Renk kontrolü burda yapýlýyor beyaz dýþý alsýn dedim
+                for (int col = 1; col <= range.Columns.Count; col++)
                 {
-                    listBox3.Items.Add(string.Join(", ", row.Cells.Cast<DataGridViewCell>().Select(cell => cell.Value)));
+                    // Hücrenin arkaplan rengini al
+                    Excel.Range cell = (Excel.Range)range.Cells[row, col];
+                    int color = (int)cell.Interior.Color;
+
+                    // Arkaplan rengi mavi ise listbox'a ekle
+                    if (color == 16711680) // Mavi rengin RGB deðeri
+                    {
+                        string value = cell.Value2.ToString(); // Hücrenin deðerini al
+                        listBox3.Items.Add(value); // Listbox'a ekle
+                    }
                 }
             }
+
+            // Excel dosyasýný kapat
+            workbook.Close(false);
+            excelApp.Quit();
         }
 
         private DataSet ReadExcelFile(string path)
