@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33424.131
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcellQueryDemo", "ExcellQueryDemo\ExcellQueryDemo.csproj", "{5E3A5EDB-0363-40E1-B293-FD45E19EA499}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E3A5EDB-0363-40E1-B293-FD45E19EA499}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E3A5EDB-0363-40E1-B293-FD45E19EA499}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E3A5EDB-0363-40E1-B293-FD45E19EA499}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E3A5EDB-0363-40E1-B293-FD45E19EA499}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E0161AC6-5D83-4EE2-82C3-FC117EB124AA}
+	EndGlobalSection
+EndGlobal
