@@ -24,11 +24,15 @@ namespace ExcellQueryDemo
 
         //public DataTable mergedData;
 
+        public string bFilePath = "";
+        public string aFilePath = "";
+
+
         private void button1_Click(object sender, EventArgs e)
         {
 
-            string oldExcellFilePath = "C:\\Users\\yunus\\Downloads\\ExcellToQueryOldID";
-            string excelFilePath = "C:\\Users\\yunus\\Downloads\\ExcellToQuery";
+            string oldExcellFilePath = aFilePath;
+            string excelFilePath = bFilePath;
 
             // SQL sorgularýný tutacak bir StringBuilder nesnesi oluþturur
             StringBuilder sb = new StringBuilder();
@@ -105,15 +109,31 @@ namespace ExcellQueryDemo
             }
         }
 
+        
         private void button3_Click(object sender, EventArgs e)
         {
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
-            // B.xlsx dosyasýnýn dizini
-            string bExcelPath = "C:\\Users\\yunus\\Downloads\\ExcellToQuery.xlsx";
+            
 
-            // A.xlsx dosyasýnýn dizini
-            string aExcelPath = "C:\\Users\\yunus\\Downloads\\ExcellToQueryOldID.xlsx";
+            OpenFileDialog openFileDialogB = new OpenFileDialog();
+            openFileDialogB.Filter = "Excel Dosyalarý|*.xlsx;*.xls";
+            if (openFileDialogB.ShowDialog() == DialogResult.OK)
+            {
+                bFilePath = openFileDialogB.FileName;
+
+                // B dosyasýný seç
+                OpenFileDialog openFileDialogA = new OpenFileDialog();
+                openFileDialogA.Filter = "Excel Dosyalarý|*.xlsx;*.xls";
+                if (openFileDialogA.ShowDialog() == DialogResult.OK)
+                {
+                    aFilePath = openFileDialogA.FileName;
+                }
+            }
+
+            // B.xlsx dosyasýnýn dizini
+            string bExcelPath = bFilePath;// A.xlsx dosyasýnýn dizini
+            string aExcelPath = aFilePath;
 
             // B.xlsx dosyasýndaki tüm satýrlarý Listbox1'e ekle
             Listbox1Doldur(bExcelPath);
@@ -122,7 +142,7 @@ namespace ExcellQueryDemo
             Listbox2Doldur(aExcelPath);
 
             // B.xlsx dosyasýndaki renkli satýrlarý Listbox3'e ekle
-            Listbox3DoldurRenkliSatirlar();
+            // Listbox3DoldurRenkliSatirlar();
         }
 
         private void Listbox1Doldur(string excelPath)
@@ -155,39 +175,39 @@ namespace ExcellQueryDemo
             }
         }
 
-        private void Listbox3DoldurRenkliSatirlar()
-        {
-            // Excel dosyasýný aç
-            Excel.Application excelApp = new Excel.Application();
-            excelApp.Visible = false; // Excel uygulamasýný gizle
-            Excel.Workbook workbook = excelApp.Workbooks.Open("C:\\Users\\yunus\\Downloads\\ExcellToQuery"); // Dosya yolunu deðiþtirin
-            Excel.Worksheet worksheet = (Excel.Worksheet)workbook.Worksheets[0]; // Ýlk çalýþma sayfasýný seç
+        //private void Listbox3DoldurRenkliSatirlar()
+        //{
+        //    // Excel dosyasýný aç
+        //    Excel.Application excelApp = new Excel.Application();
+        //    excelApp.Visible = false; // Excel uygulamasýný gizle
+        //    Excel.Workbook workbook = excelApp.Workbooks.Open("C:\\Users\\yunus\\Downloads\\ExcellToQuery"); // Dosya yolunu deðiþtirin
+        //    Excel.Worksheet worksheet = (Excel.Worksheet)workbook.Worksheets[0]; // Ýlk çalýþma sayfasýný seç
 
-            // Çalýþma sayfasýndaki tüm hücreleri al
-            Excel.Range range = worksheet.UsedRange;
+        //    // Çalýþma sayfasýndaki tüm hücreleri al
+        //    Excel.Range range = worksheet.UsedRange;
 
-            // Hücreleri tek tek dolaþ
-            for (int row = 1; row <= range.Rows.Count; row++)
-            {
-                for (int col = 1; col <= range.Columns.Count; col++)
-                {
-                    // Hücrenin arkaplan rengini al
-                    Excel.Range cell = (Excel.Range)range.Cells[row, col];
-                    int color = (int)cell.Interior.Color;
+        //    // Hücreleri tek tek dolaþ
+        //    for (int row = 1; row <= range.Rows.Count; row++)
+        //    {
+        //        for (int col = 1; col <= range.Columns.Count; col++)
+        //        {
+        //            // Hücrenin arkaplan rengini al
+        //            Excel.Range cell = (Excel.Range)range.Cells[row, col];
+        //            int color = (int)cell.Interior.Color;
 
-                    // Arkaplan rengi mavi ise listbox'a ekle
-                    if (color == 16711680) // Mavi rengin RGB deðeri
-                    {
-                        string value = cell.Value2.ToString(); // Hücrenin deðerini al
-                        listBox3.Items.Add(value); // Listbox'a ekle
-                    }
-                }
-            }
+        //            // Arkaplan rengi mavi ise listbox'a ekle
+        //            if (color == 16711680) // Mavi rengin RGB deðeri
+        //            {
+        //                string value = cell.Value2.ToString(); // Hücrenin deðerini al
+        //                listBox3.Items.Add(value); // Listbox'a ekle
+        //            }
+        //        }
+        //    }
 
-            // Excel dosyasýný kapat
-            workbook.Close(false);
-            excelApp.Quit();
-        }
+        //    // Excel dosyasýný kapat
+        //    workbook.Close(false);
+        //    excelApp.Quit();
+        //}
 
         private DataSet ReadExcelFile(string path)
         {

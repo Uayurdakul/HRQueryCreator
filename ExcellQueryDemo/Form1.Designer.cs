@@ -36,6 +36,7 @@
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
+            label4 = new Label();
             SuspendLayout();
             // 
             // button1
@@ -120,11 +121,21 @@
             label3.TabIndex = 8;
             label3.Text = "eBA Tabloları";
             // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(51, 409);
+            label4.Name = "label4";
+            label4.Size = new Size(537, 15);
+            label4.TabIndex = 9;
+            label4.Text = "Önce kolon,table ve filter içeren excell dosyası sonrasında id bilgileri içeren excel dosyası seçilmelidir.";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(942, 586);
+            Controls.Add(label4);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
@@ -137,6 +148,7 @@
             Name = "Form1";
             Text = "Form1";
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -149,5 +161,6 @@
         private Label label1;
         private Label label2;
         private Label label3;
+        private Label label4;
     }
 }
