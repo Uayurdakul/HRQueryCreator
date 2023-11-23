@@ -1,4 +1,6 @@
 using ExcelDataReader;
+using Microsoft.Office.Interop.Excel;
+using Microsoft.VisualBasic;
 using System.Data;
 using System.Data.OleDb;
 using System.Text;
@@ -177,88 +179,123 @@ namespace ExcellQueryDemo
         };
 
 
-
         private void button1_Click(object sender, EventArgs e)
         {
+            List <string> sorgular=new List<string>();
 
-            string oldExcellFilePath = aFilePath;
-            string excelFilePath = bFilePath;
-
-            // SQL sorgularýný tutacak bir StringBuilder nesnesi oluþturur
-            StringBuilder sb = new StringBuilder();
-            // A dosyasýný okumak için bir Excel baðlantýsý oluþturur
-            string connStringA = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFilePath + ";Extended Properties=\"Excel 12.0 Xml;HDR=YES\"";
-            using (OleDbConnection connA = new OleDbConnection(connStringA))
+            foreach (string itemLB3 in listBox3.Items)
             {
-                // A dosyasýndaki ilk sayfayý seçmek için bir SQL sorgusu oluþturur
-                string queryA = "SELECT * FROM [SHEET$]";
-                // Baðlantýyý açar
-                connA.Open();
-                // Sorguyu çalýþtýrmak için bir OleDbCommand nesnesi oluþturur
-                using (OleDbCommand cmdA = new OleDbCommand(queryA, connA))
+                string[] varlikTabloFiltre = itemLB3.Split(',');
+
+                foreach (string itemLB2 in listBox2.Items)
                 {
-                    // Sorgunun sonuçlarýný okumak için bir OleDbDataReader nesnesi oluþturur
-                    using (OleDbDataReader readerA = cmdA.ExecuteReader())
+                    string[] oldIDnewID= itemLB2.Split(",");
+
+                    sorgular.Add($"UPDATE {varlikTabloFiltre[1]} SET {varlikTabloFiltre[0]}='{oldIDnewID[1]}' WHERE {varlikTabloFiltre[0]}='{oldIDnewID[0]}' {varlikTabloFiltre[2]}");
+                }               
+            }
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Text File|*.txt";
+            saveFileDialog.Title = "Sorgularý Kaydet";
+            saveFileDialog.ShowDialog();
+
+            if (saveFileDialog.FileName != "")
+            {
+                using (StreamWriter writer = new StreamWriter(saveFileDialog.OpenFile()))
+                {
+                    foreach (var query in sorgular)
                     {
-                        // A dosyasýndaki her satýr için
-                        while (readerA.Read())
-                        {
-                            // Satýrdaki kolon, tablo ve filtre deðerlerini alýr
-                            string kolon = readerA["KOLON"].ToString();
-                            string tablo = readerA["TABLE"].ToString();
-                            string filtre = readerA["FILTRE"].ToString();
-                            // B dosyasýný okumak için bir Excel baðlantýsý oluþturur
-                            string connStringB = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + oldExcellFilePath + ";Extended Properties=\"Excel 12.0 Xml;HDR=YES\"";
-                            using (OleDbConnection connB = new OleDbConnection(connStringB))
-                            {
-                                // B dosyasýndaki ilk sayfayý seçmek için bir SQL sorgusu oluþturur
-                                string queryB = "SELECT * FROM [SHEET$]";
-                                // Baðlantýyý açar
-                                connB.Open();
-                                // Sorguyu çalýþtýrmak için bir OleDbCommand nesnesi oluþturur
-                                using (OleDbCommand cmdB = new OleDbCommand(queryB, connB))
-                                {
-                                    // Sorgunun sonuçlarýný okumak için bir OleDbDataReader nesnesi oluþturur
-                                    using (OleDbDataReader readerB = cmdB.ExecuteReader())
-                                    {
-                                        // b dekl her satir icin yapilacak islem
-                                        while (readerB.Read())
-                                        {
-                                            // Satýrdaki oldid ve newid deðerlerini aldýk
-                                            string oldid = readerB["OLDID"].ToString();
-                                            string newid = readerB["NEWID"].ToString();
-                                            // Filtre deðeri boþsa, UPDATE sorgusunu oluþturduk
-                                            if (string.IsNullOrEmpty(filtre))
-                                            {
-                                                sb.AppendLine("UPDATE " + tablo + " SET " + kolon + "='" + newid + "' WHERE " + kolon + "='" + oldid + "'");
-                                            }
-                                            // Filtre deðeri varsa, UPDATE sorgusuna filtre koþulunu ekledik
-                                            else
-                                            {
-                                                sb.AppendLine("UPDATE " + tablo + " SET " + kolon + "='" + newid + "' WHERE " + kolon + "='" + oldid + "' AND " + filtre);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        writer.WriteLine(query);
                     }
                 }
+
+                MessageBox.Show("Sorgular baþarýyla kaydedildi.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            // SQL sorgularýný metin dosyasýna kaydetmek için bir SaveFileDialog nesnesi oluþturdum
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            // sadece txt dosyasi
-            saveFileDialog.Filter = "Text File|*.txt";
-            // kaydetme tamam ise
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                // Oluþturulan SQL sorgularýný seçilen dosyaya yazar
-                File.WriteAllText(saveFileDialog.FileName, sb.ToString());
-                // Ýþlemin tamamlandýðýný bildirir
-                MessageBox.Show("SQL sorgularý baþarýyla kaydedildi.");
-            }
+
+            //ASAGIDAKI KISIM DIREKT EXCELLDEN VERI CEKIP SORGU OLUSTURAN KISIMDIR!!!
+
+            //string oldExcellFilePath = aFilePath;
+            //string excelFilePath = bFilePath;
+
+            //// SQL sorgularýný tutacak bir StringBuilder nesnesi oluþturur
+            //StringBuilder sb = new StringBuilder();
+            //// A dosyasýný okumak için bir Excel baðlantýsý oluþturur
+            //string connStringA = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFilePath + ";Extended Properties=\"Excel 12.0 Xml;HDR=YES\"";
+            //using (OleDbConnection connA = new OleDbConnection(connStringA))
+            //{
+            //    // A dosyasýndaki ilk sayfayý seçmek için bir SQL sorgusu oluþturur
+            //    string queryA = "SELECT * FROM [SHEET$]";
+            //    // Baðlantýyý açar
+            //    connA.Open();
+            //    // Sorguyu çalýþtýrmak için bir OleDbCommand nesnesi oluþturur
+            //    using (OleDbCommand cmdA = new OleDbCommand(queryA, connA))
+            //    {
+            //        // Sorgunun sonuçlarýný okumak için bir OleDbDataReader nesnesi oluþturur
+            //        using (OleDbDataReader readerA = cmdA.ExecuteReader())
+            //        {
+            //            // A dosyasýndaki her satýr için
+            //            while (readerA.Read())
+            //            {
+            //                // Satýrdaki kolon, tablo ve filtre deðerlerini alýr
+            //                string kolon = readerA["KOLON"].ToString();
+            //                string tablo = readerA["TABLE"].ToString();
+            //                string filtre = readerA["FILTRE"].ToString();
+            //                // B dosyasýný okumak için bir Excel baðlantýsý oluþturur
+            //                string connStringB = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + oldExcellFilePath + ";Extended Properties=\"Excel 12.0 Xml;HDR=YES\"";
+            //                using (OleDbConnection connB = new OleDbConnection(connStringB))
+            //                {
+            //                    // B dosyasýndaki ilk sayfayý seçmek için bir SQL sorgusu oluþturur
+            //                    string queryB = "SELECT * FROM [SHEET$]";
+            //                    // Baðlantýyý açar
+            //                    connB.Open();
+            //                    // Sorguyu çalýþtýrmak için bir OleDbCommand nesnesi oluþturur
+            //                    using (OleDbCommand cmdB = new OleDbCommand(queryB, connB))
+            //                    {
+            //                        // Sorgunun sonuçlarýný okumak için bir OleDbDataReader nesnesi oluþturur
+            //                        using (OleDbDataReader readerB = cmdB.ExecuteReader())
+            //                        {
+            //                            // b dekl her satir icin yapilacak islem
+            //                            while (readerB.Read())
+            //                            {
+            //                                // Satýrdaki oldid ve newid deðerlerini aldýk
+            //                                string oldid = readerB["OLDID"].ToString();
+            //                                string newid = readerB["NEWID"].ToString();
+            //                                // Filtre deðeri boþsa, UPDATE sorgusunu oluþturduk
+            //                                if (string.IsNullOrEmpty(filtre))
+            //                                {
+            //                                    sb.AppendLine("UPDATE " + tablo + " SET " + kolon + "='" + newid + "' WHERE " + kolon + "='" + oldid + "'");
+            //                                }
+            //                                // Filtre deðeri varsa, UPDATE sorgusuna filtre koþulunu ekledik
+            //                                else
+            //                                {
+            //                                    sb.AppendLine("UPDATE " + tablo + " SET " + kolon + "='" + newid + "' WHERE " + kolon + "='" + oldid + "' AND " + filtre);
+            //                                }
+            //                            }
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            //// SQL sorgularýný metin dosyasýna kaydetmek için bir SaveFileDialog nesnesi oluþturdum
+            //SaveFileDialog saveFileDialog = new SaveFileDialog();
+            //// sadece txt dosyasi
+            //saveFileDialog.Filter = "Text File|*.txt";
+            //// kaydetme tamam ise
+            //if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            //{
+            //    // Oluþturulan SQL sorgularýný seçilen dosyaya yazar
+            //    // File.WriteAllText(saveFileDialog.FileName, sb.ToString());
+            //    // Ýþlemin tamamlandýðýný bildirir
+            //    MessageBox.Show("SQL sorgularý baþarýyla kaydedildi.");
+            //}
         }
 
+        string bExcelPath = "";
+        string aExcelPath = "";
 
         private void button3_Click(object sender, EventArgs e)
         {
@@ -266,7 +303,7 @@ namespace ExcellQueryDemo
 
             checkBox1.Enabled = true;
             checkBox2.Enabled = true;
-            button1.Enabled = true;
+            button1.Enabled = false;
 
             OpenFileDialog openFileDialogB = new OpenFileDialog();
             openFileDialogB.Filter = "Excel Dosyalarý|*.xlsx;*.xls";
@@ -284,11 +321,11 @@ namespace ExcellQueryDemo
             }
 
             // B.xlsx dosyasýnýn dizini
-            string bExcelPath = bFilePath;// A.xlsx dosyasýnýn dizini
-            string aExcelPath = aFilePath;
+            bExcelPath = bFilePath;// A.xlsx dosyasýnýn dizini
+            aExcelPath = aFilePath;
 
             // B.xlsx dosyasýndaki tüm satýrlarý Listbox1'e ekle
-            Listbox1Doldur(bExcelPath);
+            Listbox1Doldur(bExcelPath);          
 
             // A.xlsx dosyasýndaki tüm satýrlarý Listbox2'e ekle
             Listbox2Doldur(aExcelPath);
@@ -303,13 +340,14 @@ namespace ExcellQueryDemo
             DataSet dataSet = ReadExcelFile(excelPath);
 
             // DataTable seçtik
-            DataTable dataTable = dataSet.Tables[0];
+            System.Data.DataTable dataTable = dataSet.Tables[0];
 
             // DataTable'daki her satýrý ListBox1'e ekledik
             foreach (DataRow row in dataTable.Rows)
             {
                 listBox1.Items.Add(string.Join(", ", row.ItemArray));
             }
+            listBox1.Items.RemoveAt(0);
         }
 
         private void Listbox2Doldur(string excelPath)
@@ -318,48 +356,15 @@ namespace ExcellQueryDemo
             DataSet dataSet = ReadExcelFile(excelPath);
 
             // DataTable seçtik
-            DataTable dataTable = dataSet.Tables[0];
+            System.Data.DataTable dataTable = dataSet.Tables[0];
 
             // DataTable'daki her satýrý ListBox2'e ekledik
             foreach (DataRow row in dataTable.Rows)
             {
                 listBox2.Items.Add(string.Join(", ", row.ItemArray));
             }
+            listBox2.Items.RemoveAt(0);
         }
-
-        //private void Listbox3DoldurRenkliSatirlar()
-        //{
-        //    // Excel dosyasýný aç
-        //    Excel.Application excelApp = new Excel.Application();
-        //    excelApp.Visible = false; // Excel uygulamasýný gizle
-        //    Excel.Workbook workbook = excelApp.Workbooks.Open("C:\\Users\\yunus\\Downloads\\ExcellToQuery"); // Dosya yolunu deðiþtirin
-        //    Excel.Worksheet worksheet = (Excel.Worksheet)workbook.Worksheets[0]; // Ýlk çalýþma sayfasýný seç
-
-        //    // Çalýþma sayfasýndaki tüm hücreleri al
-        //    Excel.Range range = worksheet.UsedRange;
-
-        //    // Hücreleri tek tek dolaþ
-        //    for (int row = 1; row <= range.Rows.Count; row++)
-        //    {
-        //        for (int col = 1; col <= range.Columns.Count; col++)
-        //        {
-        //            // Hücrenin arkaplan rengini al
-        //            Excel.Range cell = (Excel.Range)range.Cells[row, col];
-        //            int color = (int)cell.Interior.Color;
-
-        //            // Arkaplan rengi mavi ise listbox'a ekle
-        //            if (color == 16711680) // Mavi rengin RGB deðeri
-        //            {
-        //                string value = cell.Value2.ToString(); // Hücrenin deðerini al
-        //                listBox3.Items.Add(value); // Listbox'a ekle
-        //            }
-        //        }
-        //    }
-
-        //    // Excel dosyasýný kapat
-        //    workbook.Close(false);
-        //    excelApp.Quit();
-        //}
 
         private DataSet ReadExcelFile(string path)
         {
@@ -372,41 +377,79 @@ namespace ExcellQueryDemo
             }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void EslesenTablo(List<string> tableName)
         {
-            if (checkBox1.Checked)
+            // CheckBox seçiliyse listbox elemanlarýný kontrol ettik
+            List<string> secilenler = new List<string>();
+
+            foreach (string item in listBox1.Items)
             {
-                foreach (string item in standartTablo)
+                string[] kelimeler = item.Split(',');
+
+                // tablolar eþleþiyor mu kontrol
+                if (kelimeler.Length > 1 && tableName.Contains(kelimeler[1].Trim()))
                 {
-                    listBox3.Items.Add(item);
-                }
-            }
-            else
-            {
-                foreach (string item in standartTablo)
-                {
-                    listBox3.Items.Remove(item);
+                    secilenler.Add(item);
                 }
             }
 
+            //Seçilen elemanlarý yeni bir listbox'a ekledik   
+              listBox3.Items.AddRange(secilenler.ToArray());         
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {       
+            if (checkBox1.Checked&&checkBox2.Checked)
+            {
+                listBox3.Items.Clear();
+                listBox3.Items.AddRange(listBox1.Items);
+            }
+            else if (checkBox1.Checked)
+            {
+                button1.Enabled = true;
+                EslesenTablo(standartTablo);              
+            }
+            else
+            {
+                if (checkBox2.Checked)
+                { 
+                    EslesenTablo(ebaTablo);
+                    listBox3.Items.Clear();          
+                }
+                else
+                {
+                    listBox3.Items.Clear();
+                    button1.Enabled = false;
+                }
+            }
         }
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
-            if (checkBox2.Checked)
+            if (checkBox1.Checked && checkBox2.Checked)
             {
-                foreach (string item in ebaTablo)
-                {
-                    listBox3.Items.Add(item);
-                }
+                listBox3.Items.Clear();
+                listBox3.Items.AddRange(listBox1.Items);
             }
+            else if (checkBox2.Checked)
+            {
+                EslesenTablo(ebaTablo);
+                button1.Enabled = true;
+            }            
             else
             {
-                foreach (string item in ebaTablo)
+                if (checkBox1.Checked)
                 {
-                    listBox3.Items.Remove(item);
+                    listBox3.Items.Clear();
+                    EslesenTablo(standartTablo);
+                }
+                else
+                {
+                    listBox3.Items.Clear();
+                    button1.Enabled = false;
                 }
             }
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -416,163 +459,6 @@ namespace ExcellQueryDemo
             button1.Enabled = false;
         }
 
-        //private DataTable ReadExcelData(string filePath)
-        //{
-        //    DataTable dataTable = new DataTable();
-
-        //    try
-        //    {
-        //        string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={filePath};Extended Properties=\"Excel 12.0 Xml;HDR=YES;\"";
-        //        using (OleDbConnection connection = new OleDbConnection(connectionString))
-        //        {
-        //            connection.Open();
-        //            OleDbDataAdapter adapter = new OleDbDataAdapter("SELECT * FROM [SHEET$]", connection);
-        //            adapter.Fill(dataTable);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"Excel dosyasý okuma hatasý: {ex.Message}");
-        //    }
-
-        //    return dataTable;
-        //}
-
-        //private DataTable MatchColumns(DataTable oldIDData, DataTable newIDData)
-        //{
-        //    DataTable mergedData = new DataTable();
-        //    mergedData.Columns.Add("KOLON");
-        //    mergedData.Columns.Add("TABLE");
-        //    mergedData.Columns.Add("FILTRE");
-        //    mergedData.Columns.Add("OLDID");
-        //    mergedData.Columns.Add("NEWID");
-
-        //    try
-        //    {
-        //        foreach (DataRow oldRow in oldIDData.Rows)
-        //        {
-
-        //            string column = oldRow["KOLON"].ToString();
-        //            string table = oldRow["TABLE"].ToString();
-        //            string filter = oldRow["FÝLTRE"].ToString();
-        //            string oldID = oldRow["OLDID"].ToString();
-
-
-
-        //            DataRow newRow = mergedData.NewRow();
-
-        //            DataRow matchingNewIDRow = newIDData.AsEnumerable()
-        //                .FirstOrDefault(newRow => newRow["KOLON"].ToString() == column);
-
-        //            if (matchingNewIDRow != null)
-        //            {
-        //                string newID = matchingNewIDRow["NEWID"].ToString();
-
-        //                newRow["KOLON"] = column;
-        //                newRow["TABLE"] = table;
-        //                newRow["FILTRE"] = filter;
-        //                newRow["OLDID"] = oldID;
-        //                newRow["NEWID"] = newID;
-
-        //                mergedData.Rows.Add(newRow);
-        //            }
-
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"Kolonlarý eþleþtirme hatasý: {ex.Message}");
-        //    }
-
-        //    return mergedData;
-        //}
-
-        //private void SaveToExcel(DataTable data, string filePath)
-        //{
-        //    try
-        //    {
-        //        string connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={filePath};Extended Properties=\"Excel 12.0 Xml;HDR=YES;\"";
-        //        using (OleDbConnection connection = new OleDbConnection(connectionString))
-        //        {
-        //            connection.Open();
-        //            OleDbCommand cmd = new OleDbCommand();
-
-        //            StringBuilder createTableQuery = new StringBuilder();
-        //            createTableQuery.Append("CREATE TABLE [SHEET] (");
-
-        //            foreach (DataColumn column in data.Columns)
-        //            {
-        //                createTableQuery.Append($"[{column.ColumnName}] TEXT,");
-        //            }
-
-        //            createTableQuery.Remove(createTableQuery.Length - 1, 1);
-        //            createTableQuery.Append(")");
-        //            cmd.Connection = connection;
-        //            cmd.CommandText = createTableQuery.ToString();
-        //            cmd.ExecuteNonQuery();
-
-        //            foreach (DataRow row in data.Rows)
-        //            {
-        //                StringBuilder insertQuery = new StringBuilder();
-        //                insertQuery.Append("INSERT INTO [SHEET$] (");
-
-        //                foreach (DataColumn column in data.Columns)
-        //                {
-        //                    insertQuery.Append($"[{column.ColumnName}],");
-        //                }
-
-        //                insertQuery.Remove(insertQuery.Length - 1, 1);
-        //                insertQuery.Append(") VALUES (");
-
-        //                foreach (DataColumn column in data.Columns)
-        //                {
-        //                    insertQuery.Append($"'{row[column.ColumnName]}',");
-        //                }
-
-        //                insertQuery.Remove(insertQuery.Length - 1, 1);
-        //                insertQuery.Append(")");
-
-        //                cmd.CommandText = insertQuery.ToString();
-        //                cmd.ExecuteNonQuery();
-
-        //            }               
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"Excel dosyasýna yazma hatasý: {ex.Message}");
-        //    }
-        //}
-
-        //private StringBuilder GenerateSQLQueries(DataTable excelData)
-        //{
-        //    StringBuilder queries = new StringBuilder();
-
-        //    foreach (DataRow row in excelData.Rows)
-        //    {
-        //        string column = row["KOLON"].ToString();
-        //        string table = row["TABLE"].ToString();
-        //        string filter = row["FILTRE"].ToString();
-        //        string oldID = row["OLDID"].ToString();
-        //        string newID = row["NEWID"].ToString();
-
-        //        string query = $"UPDATE {table} SET {column}='{newID}' WHERE {column}='{oldID}'{filter};";
-        //        queries.AppendLine(query);
-        //    }
-
-        //    return queries;
-        //}
-
-        //private void WriteQueriesToFile(string queries, string filePath)
-        //{
-        //    try
-        //    {
-        //        File.WriteAllText(filePath, queries);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"Dosyaya yazma hatasý: {ex.Message}");
-        //    }
-        //}
+    
     }
 }
