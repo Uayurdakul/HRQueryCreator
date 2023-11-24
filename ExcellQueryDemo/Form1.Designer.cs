@@ -117,11 +117,12 @@
             // 
             label3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             label3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label3.Location = new Point(729, 56);
+            label3.Location = new Point(620, 56);
             label3.Name = "label3";
-            label3.Size = new Size(55, 29);
+            label3.Size = new Size(293, 29);
             label3.TabIndex = 8;
             label3.Text = "Tablolar";
+            label3.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label4
             // 

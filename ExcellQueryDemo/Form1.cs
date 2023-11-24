@@ -181,7 +181,7 @@ namespace ExcellQueryDemo
 
         private void button1_Click(object sender, EventArgs e)
         {
-            List <string> sorgular=new List<string>();
+            List<string> sorgular = new List<string>();
 
             foreach (string itemLB3 in listBox3.Items)
             {
@@ -189,10 +189,10 @@ namespace ExcellQueryDemo
 
                 foreach (string itemLB2 in listBox2.Items)
                 {
-                    string[] oldIDnewID= itemLB2.Split(",");
+                    string[] oldIDnewID = itemLB2.Split(",");
 
-                    sorgular.Add($"UPDATE {varlikTabloFiltre[1]} SET {varlikTabloFiltre[0]}='{oldIDnewID[1]}' WHERE {varlikTabloFiltre[0]}='{oldIDnewID[0]}' {varlikTabloFiltre[2]}");
-                }               
+                    sorgular.Add($"UPDATE {varlikTabloFiltre[1].Trim(' ')} SET {varlikTabloFiltre[0].Trim(' ')}='{oldIDnewID[1].Trim(' ')}' WHERE {varlikTabloFiltre[0].Trim(' ')}='{oldIDnewID[0].Trim(' ')}' {varlikTabloFiltre[2].Trim(' ')}");
+                }
             }
 
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -325,7 +325,7 @@ namespace ExcellQueryDemo
             aExcelPath = aFilePath;
 
             // B.xlsx dosyasýndaki tüm satýrlarý Listbox1'e ekle
-            Listbox1Doldur(bExcelPath);          
+            Listbox1Doldur(bExcelPath);
 
             // A.xlsx dosyasýndaki tüm satýrlarý Listbox2'e ekle
             Listbox2Doldur(aExcelPath);
@@ -394,32 +394,36 @@ namespace ExcellQueryDemo
             }
 
             //Seçilen elemanlarý yeni bir listbox'a ekledik   
-              listBox3.Items.AddRange(secilenler.ToArray());         
+            listBox3.Items.AddRange(secilenler.ToArray());
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {       
-            if (checkBox1.Checked&&checkBox2.Checked)
+        {
+            if (checkBox1.Checked && checkBox2.Checked)
             {
                 listBox3.Items.Clear();
+                label3.Text = "Standart ve Eba Tablolarý";
                 listBox3.Items.AddRange(listBox1.Items);
             }
             else if (checkBox1.Checked)
             {
                 button1.Enabled = true;
-                EslesenTablo(standartTablo);              
+                EslesenTablo(standartTablo);
+                label3.Text = "Standart Tablolar";
             }
             else
             {
                 if (checkBox2.Checked)
-                { 
+                {
+                    listBox3.Items.Clear();
                     EslesenTablo(ebaTablo);
-                    listBox3.Items.Clear();          
+                    label3.Text = "Eba Tablolarý";
                 }
                 else
                 {
                     listBox3.Items.Clear();
                     button1.Enabled = false;
+                    label3.Text = "Tablolar";
                 }
             }
         }
@@ -429,24 +433,28 @@ namespace ExcellQueryDemo
             if (checkBox1.Checked && checkBox2.Checked)
             {
                 listBox3.Items.Clear();
+                label3.Text = "Standart ve Eba Tablolarý";
                 listBox3.Items.AddRange(listBox1.Items);
             }
             else if (checkBox2.Checked)
             {
                 EslesenTablo(ebaTablo);
+                label3.Text = "Eba Tablolarý";
                 button1.Enabled = true;
-            }            
+            }
             else
             {
                 if (checkBox1.Checked)
                 {
                     listBox3.Items.Clear();
                     EslesenTablo(standartTablo);
+                    label3.Text = "Standart Tablolar";
                 }
                 else
                 {
                     listBox3.Items.Clear();
                     button1.Enabled = false;
+                    label3.Text = "Tablolar";
                 }
             }
 
@@ -459,6 +467,6 @@ namespace ExcellQueryDemo
             button1.Enabled = false;
         }
 
-    
+
     }
 }
