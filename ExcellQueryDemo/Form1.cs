@@ -8,15 +8,6 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ExcellQueryDemo
 {
-    /*
-     * Dosya yolu open file dialog ile yapýlabilir.
-     * Sütun isimleri parametre olabilir
-     * kaydederken txt dosyasý yerine xlsx dosyasýna kaydetme iþlemi yapabilir.
-     * Filter deðeri default olarak and ile gelmek zorunda deðil kontrolü yapýyor.
-     * excell sheet isimleri deðiþken olaiblir. 
-     * 
-     */
-
     public partial class Form1 : Form
     {
         public Form1()
@@ -213,85 +204,7 @@ namespace ExcellQueryDemo
                 MessageBox.Show("Sorgular baþarýyla kaydedildi.", "Bilgi", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
-            //ASAGIDAKI KISIM DIREKT EXCELLDEN VERI CEKIP SORGU OLUSTURAN KISIMDIR!!!
-
-            //string oldExcellFilePath = aFilePath;
-            //string excelFilePath = bFilePath;
-
-            //// SQL sorgularýný tutacak bir StringBuilder nesnesi oluþturur
-            //StringBuilder sb = new StringBuilder();
-            //// A dosyasýný okumak için bir Excel baðlantýsý oluþturur
-            //string connStringA = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFilePath + ";Extended Properties=\"Excel 12.0 Xml;HDR=YES\"";
-            //using (OleDbConnection connA = new OleDbConnection(connStringA))
-            //{
-            //    // A dosyasýndaki ilk sayfayý seçmek için bir SQL sorgusu oluþturur
-            //    string queryA = "SELECT * FROM [SHEET$]";
-            //    // Baðlantýyý açar
-            //    connA.Open();
-            //    // Sorguyu çalýþtýrmak için bir OleDbCommand nesnesi oluþturur
-            //    using (OleDbCommand cmdA = new OleDbCommand(queryA, connA))
-            //    {
-            //        // Sorgunun sonuçlarýný okumak için bir OleDbDataReader nesnesi oluþturur
-            //        using (OleDbDataReader readerA = cmdA.ExecuteReader())
-            //        {
-            //            // A dosyasýndaki her satýr için
-            //            while (readerA.Read())
-            //            {
-            //                // Satýrdaki kolon, tablo ve filtre deðerlerini alýr
-            //                string kolon = readerA["KOLON"].ToString();
-            //                string tablo = readerA["TABLE"].ToString();
-            //                string filtre = readerA["FILTRE"].ToString();
-            //                // B dosyasýný okumak için bir Excel baðlantýsý oluþturur
-            //                string connStringB = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + oldExcellFilePath + ";Extended Properties=\"Excel 12.0 Xml;HDR=YES\"";
-            //                using (OleDbConnection connB = new OleDbConnection(connStringB))
-            //                {
-            //                    // B dosyasýndaki ilk sayfayý seçmek için bir SQL sorgusu oluþturur
-            //                    string queryB = "SELECT * FROM [SHEET$]";
-            //                    // Baðlantýyý açar
-            //                    connB.Open();
-            //                    // Sorguyu çalýþtýrmak için bir OleDbCommand nesnesi oluþturur
-            //                    using (OleDbCommand cmdB = new OleDbCommand(queryB, connB))
-            //                    {
-            //                        // Sorgunun sonuçlarýný okumak için bir OleDbDataReader nesnesi oluþturur
-            //                        using (OleDbDataReader readerB = cmdB.ExecuteReader())
-            //                        {
-            //                            // b dekl her satir icin yapilacak islem
-            //                            while (readerB.Read())
-            //                            {
-            //                                // Satýrdaki oldid ve newid deðerlerini aldýk
-            //                                string oldid = readerB["OLDID"].ToString();
-            //                                string newid = readerB["NEWID"].ToString();
-            //                                // Filtre deðeri boþsa, UPDATE sorgusunu oluþturduk
-            //                                if (string.IsNullOrEmpty(filtre))
-            //                                {
-            //                                    sb.AppendLine("UPDATE " + tablo + " SET " + kolon + "='" + newid + "' WHERE " + kolon + "='" + oldid + "'");
-            //                                }
-            //                                // Filtre deðeri varsa, UPDATE sorgusuna filtre koþulunu ekledik
-            //                                else
-            //                                {
-            //                                    sb.AppendLine("UPDATE " + tablo + " SET " + kolon + "='" + newid + "' WHERE " + kolon + "='" + oldid + "' AND " + filtre);
-            //                                }
-            //                            }
-            //                        }
-            //                    }
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
-            //// SQL sorgularýný metin dosyasýna kaydetmek için bir SaveFileDialog nesnesi oluþturdum
-            //SaveFileDialog saveFileDialog = new SaveFileDialog();
-            //// sadece txt dosyasi
-            //saveFileDialog.Filter = "Text File|*.txt";
-            //// kaydetme tamam ise
-            //if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            //{
-            //    // Oluþturulan SQL sorgularýný seçilen dosyaya yazar
-            //    // File.WriteAllText(saveFileDialog.FileName, sb.ToString());
-            //    // Ýþlemin tamamlandýðýný bildirir
-            //    MessageBox.Show("SQL sorgularý baþarýyla kaydedildi.");
-            //}
+            
         }
 
         string bExcelPath = "";
@@ -321,7 +234,8 @@ namespace ExcellQueryDemo
             }
 
             // B.xlsx dosyasýnýn dizini
-            bExcelPath = bFilePath;// A.xlsx dosyasýnýn dizini
+            bExcelPath = bFilePath;
+            // A.xlsx dosyasýnýn dizini
             aExcelPath = aFilePath;
 
             // B.xlsx dosyasýndaki tüm satýrlarý Listbox1'e ekle
@@ -330,8 +244,7 @@ namespace ExcellQueryDemo
             // A.xlsx dosyasýndaki tüm satýrlarý Listbox2'e ekle
             Listbox2Doldur(aExcelPath);
 
-            // B.xlsx dosyasýndaki renkli satýrlarý Listbox3'e ekle
-            // Listbox3DoldurRenkliSatirlar();
+            
         }
 
         private void Listbox1Doldur(string excelPath)
